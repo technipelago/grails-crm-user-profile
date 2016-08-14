@@ -5,7 +5,7 @@ grails.project.target.level = 1.6
 
 grails.project.fork = [
     //  compile: [maxMemory: 256, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
-    test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false],
+    test: false,
     run: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false],
     war: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false],
     console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]
@@ -29,6 +29,7 @@ grails.project.dependency.resolution = {
             export = false
         }
         test(":hibernate4:4.3.6.1") {
+            excludes "net.sf.ehcache:ehcache-core"  // remove this when http://jira.grails.org/browse/GPHIB-18 is resolved
             export = false
         }
         test(":codenarc:0.25.2") { export = false }

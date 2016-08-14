@@ -21,7 +21,8 @@ class CrmUserProfileGrailsPlugin {
     def dependsOn = [:]
     def loadAfter = ['crmSecurity']
     def pluginExcludes = [
-            "grails-app/views/error.gsp"
+            "grails-app/views/error.gsp",
+            "src/groovy/grails/plugins/crm/security/TestSecurityDelegate.groovy"
     ]
     def title = "User Profile for GR8 CRM"
     def author = "Goran Ehrsson"
