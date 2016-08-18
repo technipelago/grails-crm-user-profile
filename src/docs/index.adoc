@@ -32,6 +32,7 @@ This plugin provide user interface for managing user profiles (settings) in GR8 
 
 == Changes
 
+2.4.1:: Fixed problem with user role update in admin UI
 2.4.0:: First public release.
 
 == License
