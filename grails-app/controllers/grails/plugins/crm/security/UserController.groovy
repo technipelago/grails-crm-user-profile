@@ -133,11 +133,11 @@ class UserController {
 
         switch (request.method) {
             case 'GET':
-                return [crmUser: crmUser]
+                return [crmUser: crmUser, roles: getRoleOptions()]
             case 'POST':
                 bindData(crmUser, params, [include: CrmUser.BIND_WHITELIST])
                 if (crmUser.hasErrors()) {
-                    render view: 'create', model: [crmUser: crmUser]
+                    render view: 'create', model: [crmUser: crmUser, roles: getRoleOptions()]
                     return
                 }
 
@@ -149,7 +149,7 @@ class UserController {
                         params.status = CrmUser.STATUS_ACTIVE
                     } else {
                         flash.error = message(code: 'settings.password.not.equal', default: "Passwords were not equal")
-                        render view: 'create', model: [crmUser: crmUser]
+                        render view: 'create', model: [crmUser: crmUser, roles: getRoleOptions()]
                         return
                     }
                 } else {
@@ -160,18 +160,12 @@ class UserController {
 
                 try {
                     crmUser = crmSecurityService.createUser(params.subMap(['username', 'email', 'name', 'company', 'telephone', 'defaultTenant', 'status', 'password']))
-                    for (t in CrmTenant.list()) {
-                        crmSecurityService.addUserRole(crmUser, 'guest', null, t.id)
-                    }
-                    def role = params.role
-                    if (role && (role != 'guest')) {
-                        crmSecurityService.addUserRole(crmUser, role, null, TenantUtils.tenant)
-                    }
+                    crmSecurityService.addUserRole(crmUser, params.role ?: 'guest', null, TenantUtils.tenant)
                     flash.success = message(code: 'crmUser.created.message', args: [message(code: 'crmUser.label', default: 'User'), crmUser.toString()])
                     redirect action: 'list'
                 } catch (Exception e) {
                     flash.error = e.message
-                    render view: 'create', model: [crmUser: crmUser]
+                    render view: 'create', model: [crmUser: crmUser, roles: getRoleOptions()]
                 }
                 break
         }
@@ -194,17 +188,11 @@ class UserController {
             }
         }
         def tenants = crmSecurityService.getTenants(crmUser.username)
-        def role
-        for (r in ['admin', 'user']) {
-            if (crmSecurityService.hasRole(r, null, crmUser.username)) {
-                role = r
-                break
-            }
-        }
+        def role = ['admin', 'user', 'guest'].find { r -> crmSecurityService.hasRole(r, null, crmUser.username) }
 
         switch (request.method) {
             case 'GET':
-                return [crmUser    : crmUser, tenantList: tenants, role: role,
+                return [crmUser    : crmUser, tenantList: tenants, role: role, roles: getRoleOptions(),
                         accountList: crmAccountService.getAccounts(crmUser.username), deleteOk: deleteOk]
             case 'POST':
                 if (params.version && crmUser.version) {
@@ -213,7 +201,7 @@ class UserController {
                         crmUser.errors.rejectValue('version', 'crmUser.optimistic.locking.failure',
                                 [message(code: 'crmUser.label', default: 'User')] as Object[],
                                 "Another user has updated this user while you were editing")
-                        render view: 'edit', model: [crmUser    : crmUser, tenantList: tenants,
+                        render view: 'edit', model: [crmUser    : crmUser, tenantList: tenants, role: role, roles: getRoleOptions(),
                                                      accountList: crmAccountService.getAccounts(crmUser.username), deleteOk: deleteOk]
                         return
                     }
@@ -231,7 +219,7 @@ class UserController {
                         crmSecurityService.updateUser(crmUser, [password: params.password1, status: CrmUser.STATUS_ACTIVE])
                     } else {
                         flash.error = message(code: 'settings.password.not.equal', default: "Passwords were not equal")
-                        render view: 'edit', model: [crmUser    : crmUser, tenantList: tenants,
+                        render view: 'edit', model: [crmUser    : crmUser, tenantList: tenants, role: role, roles: getRoleOptions(),
                                                      accountList: crmAccountService.getAccounts(crmUser.username), deleteOk: deleteOk]
                         return
                     }
@@ -246,6 +234,14 @@ class UserController {
                 redirect action: 'list'
                 break
         }
+    }
+
+    private List<Map> getRoleOptions() {
+        [
+                [value: 'guest', label: message(code: 'crmRole.role.guest.label', default: 'Guest')],
+                [value: 'user', label: message(code: 'crmRole.role.user.label', default: 'User')],
+                [value: 'admin', label: message(code: 'crmRole.role.admin.label', default: 'Admin')]
+        ]
     }
 
     @Transactional

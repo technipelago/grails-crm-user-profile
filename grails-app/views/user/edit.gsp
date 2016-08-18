@@ -50,14 +50,10 @@
 
                 <div class="control-group">
                     <label class="control-label">
-                        Roll
+                        <g:message code="crmRole.label" default="Role"/>
                     </label>
                     <div class="controls">
-                        <select name="role">
-                            <option value="guest" <%= role == 'guest' ? 'selected' : '' %>>Gäst</option>
-                            <option value="user" <%= role == 'user' ? 'selected' : '' %>>Användare</option>
-                            <option value="admin" <%= role == 'admin' ? 'selected' : '' %>>Administratör</option>
-                        </select>
+                        <g:select name="role" from="${roles}" value="${role}" optionKey="value" optionValue="label"/>
                     </div>
                 </div>
 

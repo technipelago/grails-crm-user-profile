@@ -29,7 +29,7 @@
 
         <crm:sortableColumn property="telephone"
                             title="${message(code: 'crmUser.telephone.label', default: 'Telephone')}"/>
-        <th>Roll</th>
+        <th><g:message code="crmRole.label" default="Role"/></th>
     </tr>
     </thead>
     <tbody>
@@ -46,7 +46,7 @@
             <td>${fieldValue(bean: crmUser, field: "company")}</td>
             <td>${fieldValue(bean: crmUser, field: "email")}</td>
             <td>${fieldValue(bean: crmUser, field: "telephone")}</td>
-            <td><crm:userRoles username="${crmUser.username}" var="r">${r.role}</crm:userRoles></td>
+            <td><crm:userRoles username="${crmUser.username}" var="r">${message(code: 'crmRole.role.' + r.role + '.label')}</crm:userRoles></td>
         </tr>
     </g:each>
     </tbody>

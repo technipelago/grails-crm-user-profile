@@ -47,14 +47,10 @@
             <div class="span6">
                 <div class="control-group">
                     <label class="control-label">
-                        Roll
+                        <g:message code="crmRole.label" default="Role"/>
                     </label>
                     <div class="controls">
-                        <select name="role">
-                            <option value="guest">Gäst</option>
-                            <option value="user">Användare</option>
-                            <option value="admin">Administratör</option>
-                        </select>
+                        <g:select name="role" from="${roles}" value="${role}" optionKey="value" optionValue="label"/>
                     </div>
                 </div>
 
