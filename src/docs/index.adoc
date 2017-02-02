@@ -32,6 +32,7 @@ This plugin provide user interface for managing user profiles (settings) in GR8 
 
 == Changes
 
+2.4.2:: Default tenant was hard-coded to 1 for new users. Now it's set to null to let app select best tenant
 2.4.1:: Fixed problem with user role update in admin UI
 2.4.0:: First public release.
 
