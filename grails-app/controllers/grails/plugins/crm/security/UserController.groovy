@@ -141,8 +141,6 @@ class UserController {
                     return
                 }
 
-                params.defaultTenant = 1L
-
                 if (params.password1) {
                     if (params.password1 == params.password2) {
                         params.password = params.password1
